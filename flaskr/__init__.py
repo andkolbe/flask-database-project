@@ -1,11 +1,10 @@
 # instead of creating a Flask instance globally, you will create it inside of a function 
 # this function is known as the application factory
 # any configuration, registration, and other setup the application needs will happen inside the function, then the application will be returned 
-
-import os 
 import mysql.connector
 from mysql.connector import errorcode
-from flask import Flask 
+from flask import Flask
+from flaskr.schema import TABLES 
 
 DB_NAME = 'restaurantdb'
 
@@ -48,6 +47,20 @@ def create_app():
         else:
             print(err)
             exit(1)
+
+    # create tables 
+    for table_name in TABLES:
+        table_description = TABLES[table_name]
+        try:
+            print('Creating table {}: '.format(table_name), end = '')
+            cur.execute(table_description)
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+                print('already exists')
+            else:
+                print(err.msg)
+        else:
+            print('OK')
 
     cur.close()
     cnx.close()

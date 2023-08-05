@@ -10,7 +10,7 @@ TABLES['restaurant'] = (
         ID INT NOT NULL,
         Name VARCHAR(45) NOT NULL,
         Address VARCHAR(125) NOT NULL,
-        PhoneNumber VARCHAR(15) NOT NULL
+        PhoneNumber VARCHAR(15) NOT NULL,
         PRIMARY KEY (ID)
     )
 """
@@ -18,7 +18,7 @@ TABLES['restaurant'] = (
 
 TABLES['employee'] = (
 """ 
-    CREATE TABLES employee (
+    CREATE TABLE employee (
         ID INT NOT NULL,
         Name VARCHAR(200) NOT NULL,
         Email VARCHAR(200) NOT NULL,
