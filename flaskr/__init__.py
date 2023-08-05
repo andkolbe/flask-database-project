@@ -3,32 +3,55 @@
 # any configuration, registration, and other setup the application needs will happen inside the function, then the application will be returned 
 
 import os 
+import mysql.connector
+from mysql.connector import errorcode
 from flask import Flask 
 
-def create_app(test_config = None):
+DB_NAME = 'restaurantdb'
+
+config = {
+    'user': 'root',
+    'password': 'root',
+    'host': '127.0.0.1',
+    'port': 3306
+}
+
+def create_app():
     # create and configure the app 
     # __name__ is the name of the current Python module
     # the app needs to know where it's located to set up some paths, and __name__ is a convenient way to tell it that 
-    # instance_relative_config=True tells the app that configuration files are relative to the instance folder 
-    # the instance folder is located outside the flaskr package and can hold local data that shouldn't be commited to version control
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY = 'dev', # used by flask and extensions to keep data safe. Should be overwritten with a random value for deployment
-        DATABASE = ''
-    )
+    app = Flask(__name__)
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
-
-    # ensure the instance folder exists
+    # connect to db
     try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
+        cnx = mysql.connector.connect(**config)
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print('something is wrong with your user name or password')
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print('Database does not exist')
+        else:
+            print(err)
+
+    # create a cursor 
+    cur = cnx.cursor()
+
+    # use restaurantdb database
+    try:
+        cur.execute('USE {}'.format(DB_NAME))
+    except mysql.connector.Error as err:
+        print('Database {} does not exists.'.format(DB_NAME))
+        if err.errno == errorcode.ER_BAD_DB_ERROR:
+            create_database(cur)
+            print('Database {} created successfully.'.format(DB_NAME))
+            cnx.database = DB_NAME
+        else:
+            print(err)
+            exit(1)
+
+    cur.close()
+    cnx.close()
+
 
     # a simple page that says hello
     @app.route('/hello')
@@ -36,3 +59,11 @@ def create_app(test_config = None):
         return 'Hello, World!'
 
     return app  
+
+def create_database(cursor):
+    try:
+        cursor.execute(
+            'CREATE DATABASE {}'.format(DB_NAME))
+    except mysql.connector.Error as err:
+        print('Failed creating database: {}'.format(err))
+        exit(1)

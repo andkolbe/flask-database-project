@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
 
-DB_NAME = 'restaurants'
+DB_NAME = 'restaurantdb'
 
 TABLES = {}
 TABLES['restaurant'] = (
