@@ -3,7 +3,7 @@
 # any configuration, registration, and other setup the application needs will happen inside the function, then the application will be returned 
 import mysql.connector
 from mysql.connector import errorcode
-from flask import Flask
+from flask import Flask, request, jsonify
 from flaskr.schema import TABLES 
 
 DB_NAME = 'restaurantdb'
@@ -76,22 +76,31 @@ def create_app():
         cnx = mysql.connector.connect(**config, database = DB_NAME)
         cursor = cnx.cursor()
 
+        data = request.json
+
+        if data is None: 
+            return jsonify({'error': 'No JSON data provided'}), 400
+        
+        name = data.get('name')
+        email = data.get('email')
+        phoneNumber = data.get('phoneNumber')
+        job = data.get('job')
+        salary = data.get('salary')
+        
         add_employee = ("""
             INSERT INTO employee
             (Name, Email, PhoneNumber, Job, Salary, RestaurantID)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, 1)
             """)
         
-        data_employee = ('Joey James', 'joey@aol.com', '3332221111', 'Waiter', 60000, 1)
-
-        cursor.execute(add_employee, data_employee)
+        cursor.execute(add_employee, (name, email, phoneNumber, job, salary))
 
         cnx.commit()
 
         cursor.close()
         cnx.close()
 
-        return 'new row inserted'
+        return name
 
     return app  
 
