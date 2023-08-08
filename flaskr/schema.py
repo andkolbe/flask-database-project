@@ -1,13 +1,8 @@
-import mysql.connector
-from mysql.connector import errorcode
-
-DB_NAME = 'restaurantdb'
-
 TABLES = {}
 TABLES['restaurant'] = (
 """
     CREATE TABLE restaurant (
-        ID INT NOT NULL,
+        ID INT NOT NULL AUTO_INCREMENT,
         Name VARCHAR(45) NOT NULL,
         Address VARCHAR(125) NOT NULL,
         PhoneNumber VARCHAR(15) NOT NULL,
@@ -19,7 +14,7 @@ TABLES['restaurant'] = (
 TABLES['employee'] = (
 """ 
     CREATE TABLE employee (
-        ID INT NOT NULL,
+        ID INT NOT NULL AUTO_INCREMENT,
         Name VARCHAR(200) NOT NULL,
         Email VARCHAR(200) NOT NULL,
         PhoneNumber VARCHAR(15) NOT NULL,
@@ -35,7 +30,7 @@ TABLES['employee'] = (
 TABLES['menu'] = (
 """
     CREATE TABLE menu (
-        ID INT NOT NULL,
+        ID INT NOT NULL AUTO_INCREMENT,
         Name VARCHAR(45) NOT NULL,
         RestaurantID INT NOT NULL,
         PRIMARY KEY (ID),
@@ -47,7 +42,7 @@ TABLES['menu'] = (
 TABLES['dish'] = (
 """ 
     CREATE TABLE dish (
-        ID INT NOT NULL,
+        ID INT NOT NULL AUTO_INCREMENT,
         Name VARCHAR(45) NOT NULL,
         Category VARCHAR(100) NOT NULL,
         Price DECIMAL NOT NULL,

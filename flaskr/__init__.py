@@ -70,6 +70,28 @@ def create_app():
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
+    
+    @app.post('/employee')
+    def employee_post():
+        cnx = mysql.connector.connect(**config, database = DB_NAME)
+        cursor = cnx.cursor()
+
+        add_employee = ("""
+            INSERT INTO employee
+            (Name, Email, PhoneNumber, Job, Salary, RestaurantID)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """)
+        
+        data_employee = ('Joey James', 'joey@aol.com', '3332221111', 'Waiter', 60000, 1)
+
+        cursor.execute(add_employee, data_employee)
+
+        cnx.commit()
+
+        cursor.close()
+        cnx.close()
+
+        return 'new row inserted'
 
     return app  
 
